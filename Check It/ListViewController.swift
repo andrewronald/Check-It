@@ -10,8 +10,12 @@ import UIKit
 
 class ListViewController: UITableViewController {
     var items = ["Buy tires", "Go try one new balances", "Update resume"]
+    let defaults = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let itemsPList = defaults.array(forKey: "ItemsArray") as? [String]{
+            items = itemsPList
+        }
         // Do any additional setup after loading the view.
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
     }
@@ -50,6 +54,7 @@ class ListViewController: UITableViewController {
             print(textField.text)
             if(!textField.text!.isEmpty){
             self.items.append(textField.text!)
+            self.defaults.set(self.items, forKey: "ItemsArray")
             self.tableView.reloadData()
             }
         }
