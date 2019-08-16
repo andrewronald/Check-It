@@ -11,20 +11,14 @@ import UIKit
 class ListViewController: UITableViewController {
     var items = [Item]()
     let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     override func viewDidLoad() {
         super.viewDidLoad()
-        let newItem = Item()
-        newItem.title="Buy Tires"
-        items.append(newItem)
-        let newItem1 = Item()
-        newItem1.title="Update Resume"
-        items.append(newItem1)
-        let newItem2 = Item()
-        newItem2.title="Get New Shoes"
-        items.append(newItem2)
+        print(dataFilePath!)
         if let itemsPList = defaults.array(forKey: "ItemsArray") as? [Item]{
             items = itemsPList
         }
+        loadItems()
         // Do any additional setup after loading the view.
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
     }
@@ -48,11 +42,12 @@ class ListViewController: UITableViewController {
         print(items[indexPath.row])
         //tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         items[indexPath.row].complete = !items[indexPath.row].complete
-        if(tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark){
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }else{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+//        if(tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark){
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+//        }else{
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+//        }
+        saveItems()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -67,8 +62,9 @@ class ListViewController: UITableViewController {
                 let newItem = Item()
                 newItem.title = textField.text!
                 self.items.append(newItem)
-                self.defaults.set(self.items, forKey: "ItemsArray")
-                self.tableView.reloadData()
+//                self.defaults.set(self.items, forKey: "ItemsArray")
+                self.saveItems()
+                
             }
         }
         alert.addTextField { (alertTextField) in
@@ -79,7 +75,36 @@ class ListViewController: UITableViewController {
          alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
+
+func saveItems(){
+    let encoder = PropertyListEncoder()
+    do{
+        let data = try encoder.encode(items)
+        try data.write(to: dataFilePath!)
+    }catch{
+        print("ERROR")
+        print("ERROR")
+        print("ERROR")
+        print("ERROR")
+        print("\(error)")
+        }
+    self.tableView.reloadData()
+    }
+func loadItems(){
+    if let data = try? Data(contentsOf: dataFilePath!){
+        let decoder = PropertyListDecoder()
+        do{
+            items = try decoder.decode([Item].self, from: data)
+        }catch{
+            print("ERROR")
+            print("ERROR")
+            print("ERROR")
+            print("ERROR")
+            print("ERROR")
+            print("\(error)")
+        }
+    }
+    
+    }
+    
 }
-
-
-
