@@ -136,5 +136,4 @@ extension ListViewController: UISearchBarDelegate{
             }
         }
     }
-    
 }
