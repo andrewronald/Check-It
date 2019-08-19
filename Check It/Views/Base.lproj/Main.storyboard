@@ -10,6 +10,45 @@
     </dependencies>
     <scenes>
         <!--Check It-->
+        <scene sceneID="LpE-B6-0rx">
+            <objects>
+                <tableViewController id="uWG-BQ-Drd" customClass="CategoryViewController" customModule="Check_It" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="5K9-sC-KYg">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="categoryCell" id="9We-WR-tqo">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9We-WR-tqo" id="CWp-8e-qjq">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="uWG-BQ-Drd" id="kci-oG-99y"/>
+                            <outlet property="delegate" destination="uWG-BQ-Drd" id="42L-y2-GJ9"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Check It" id="CfP-Og-ffN">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="fdo-W7-KIK">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="addButtonPressed:" destination="uWG-BQ-Drd" id="ZRw-07-eyX"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <segue destination="6hI-dy-hHa" kind="show" identifier="goToItems" id="UUe-al-9vQ"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="coc-Bj-Nkd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1098" y="119"/>
+        </scene>
+        <!--To Do-->
         <scene sceneID="k9M-vQ-mpi">
             <objects>
                 <tableViewController id="6hI-dy-hHa" customClass="ListViewController" customModule="Check_It" customModuleProvider="target" sceneMemberID="viewController">
@@ -17,9 +56,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" id="DQf-ds-Zwc">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <outlet property="delegate" destination="6hI-dy-hHa" id="J4m-lj-hDl"/>
+                            </connections>
+                        </searchBar>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListItemCell" id="B8r-jb-y6w">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="72" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="B8r-jb-y6w" id="6sa-cO-Ouh">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
@@ -32,7 +79,7 @@
                             <outlet property="delegate" destination="6hI-dy-hHa" id="8ig-tB-Dia"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Check It" id="eFp-IO-hhl">
+                    <navigationItem key="navigationItem" title="To Do" id="eFp-IO-hhl">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="AAe-fA-39f">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
@@ -61,12 +108,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="6hI-dy-hHa" kind="relationship" relationship="rootViewController" id="djP-fD-g3q"/>
+                        <segue destination="uWG-BQ-Drd" kind="relationship" relationship="rootViewController" id="6K0-nI-kyJ"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mho-gU-1Yt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1142" y="119"/>
+            <point key="canvasLocation" x="334" y="119"/>
         </scene>
     </scenes>
 </document>

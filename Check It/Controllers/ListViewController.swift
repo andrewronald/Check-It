@@ -7,18 +7,24 @@
 //
 
 import UIKit
-
-class ListViewController: UITableViewController {
+import CoreData
+class ListViewController: UITableViewController{
     var items = [Item]()
+    var selectedCategory : Category? {
+        didSet{
+            loadItems()
+        }
+    }
     let defaults = UserDefaults.standard
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
         print(dataFilePath!)
-        if let itemsPList = defaults.array(forKey: "ItemsArray") as? [Item]{
-            items = itemsPList
-        }
-        loadItems()
+//        if let itemsPList = defaults.array(forKey: "ItemsArray") as? [Item]{
+//            items = itemsPList
+//        }
+        //loadItems()
         // Do any additional setup after loading the view.
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
     }
@@ -41,7 +47,9 @@ class ListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(items[indexPath.row])
         //tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        items[indexPath.row].complete = !items[indexPath.row].complete
+        items[indexPath.row].complete = !items[indexPath.row].complete //toggles accessorytype
+//        context.delete(items[indexPath.row])
+//        items.remove(at: indexPath.row)
 //        if(tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark){
 //            tableView.cellForRow(at: indexPath)?.accessoryType = .none
 //        }else{
@@ -59,8 +67,10 @@ class ListViewController: UITableViewController {
             print("add item button pressed")
             print(textField.text!)
             if(!textField.text!.isEmpty){
-                let newItem = Item()
+                let newItem = Item(context: self.context)
                 newItem.title = textField.text!
+                newItem.complete = false
+                newItem.parentCategory = self.selectedCategory
                 self.items.append(newItem)
 //                self.defaults.set(self.items, forKey: "ItemsArray")
                 self.saveItems()
@@ -76,35 +86,55 @@ class ListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
 
-func saveItems(){
-    let encoder = PropertyListEncoder()
-    do{
-        let data = try encoder.encode(items)
-        try data.write(to: dataFilePath!)
-    }catch{
-        print("ERROR")
-        print("ERROR")
-        print("ERROR")
-        print("ERROR")
-        print("\(error)")
-        }
-    self.tableView.reloadData()
-    }
-func loadItems(){
-    if let data = try? Data(contentsOf: dataFilePath!){
-        let decoder = PropertyListDecoder()
+    func saveItems(){
         do{
-            items = try decoder.decode([Item].self, from: data)
+            try context.save()
         }catch{
             print("ERROR")
             print("ERROR")
             print("ERROR")
             print("ERROR")
+            print("\(error)")
+            }
+        self.tableView.reloadData()
+    }
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        if let additonalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additonalPredicate])
+        }else{
+            request.predicate = categoryPredicate
+        }
+        //        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, predicate])
+//        request.predicate = compoundPredicate
+        do{
+            items = try context.fetch(request)
+        }catch{
+            print("ERROR")
+            print("ERROR")
+            print("ERROR")
             print("ERROR")
             print("\(error)")
+            
         }
+        tableView.reloadData()
     }
     
+}
+extension ListViewController: UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        loadItems(with: request, predicate: predicate)
+    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0{
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
     }
     
 }
