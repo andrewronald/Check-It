@@ -7,9 +7,10 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 class ListViewController: UITableViewController{
-    var items = [Item]()
+    var items: Results<Item>?
+    let realm = try! Realm()
     var selectedCategory : Category? {
         didSet{
             loadItems()
@@ -17,7 +18,6 @@ class ListViewController: UITableViewController{
     }
     let defaults = UserDefaults.standard
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
         print(dataFilePath!)
@@ -29,15 +29,20 @@ class ListViewController: UITableViewController{
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewTapped))
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return items?.count ?? 1
     }
     func configureTableView(){
         
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ListItemCell", for: indexPath)
-        cell.textLabel?.text = items[indexPath.row].title
-        cell.accessoryType = items[indexPath.row].complete ? .checkmark : .none
+        if let item = items?[indexPath.row]{
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.complete ? .checkmark : .none
+        }else{
+            cell.textLabel?.text = "No items added"
+        }
+        
         return cell
         
     }
@@ -45,18 +50,22 @@ class ListViewController: UITableViewController{
         
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(items[indexPath.row])
-        //tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        items[indexPath.row].complete = !items[indexPath.row].complete //toggles accessorytype
-//        context.delete(items[indexPath.row])
-//        items.remove(at: indexPath.row)
-//        if(tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark){
-//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-//        }else{
-//            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-//        }
-        saveItems()
-        tableView.deselectRow(at: indexPath, animated: true)
+        if let item = items?[indexPath.row]{ //selected item
+            do{
+                try realm.write{
+                    item.complete = !item.complete
+                }
+            }catch{
+                print("ERROR")
+                print("ERROR")
+                print("ERROR")
+                print("ERROR")
+                print("error saving complete satus")
+                print("\(error)")
+            }
+        }
+        tableView.reloadData()
+        
     }
     
     //MARK - Add Item To List
@@ -67,13 +76,23 @@ class ListViewController: UITableViewController{
             print("add item button pressed")
             print(textField.text!)
             if(!textField.text!.isEmpty){
-                let newItem = Item(context: self.context)
-                newItem.title = textField.text!
-                newItem.complete = false
-                newItem.parentCategory = self.selectedCategory
-                self.items.append(newItem)
-//                self.defaults.set(self.items, forKey: "ItemsArray")
-                self.saveItems()
+                if let currentCategory = self.selectedCategory{
+                    do{
+                        try self.realm.write{
+                            let newItem = Item()
+                            newItem.title = textField.text!
+                            newItem.dateCreated = Date()
+                            currentCategory.items.append(newItem)
+                        }
+                    }catch{
+                        print("ERROR")
+                        print("ERROR")
+                        print("ERROR")
+                        print("ERROR")
+                        print("\(error)")
+                    }
+                }
+                self.tableView.reloadData()  
                 
             }
         }
@@ -85,48 +104,16 @@ class ListViewController: UITableViewController{
          alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-
-    func saveItems(){
-        do{
-            try context.save()
-        }catch{
-            print("ERROR")
-            print("ERROR")
-            print("ERROR")
-            print("ERROR")
-            print("\(error)")
-            }
-        self.tableView.reloadData()
-    }
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        if let additonalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additonalPredicate])
-        }else{
-            request.predicate = categoryPredicate
-        }
-        //        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, predicate])
-//        request.predicate = compoundPredicate
-        do{
-            items = try context.fetch(request)
-        }catch{
-            print("ERROR")
-            print("ERROR")
-            print("ERROR")
-            print("ERROR")
-            print("\(error)")
-            
-        }
+    func loadItems(){
+        items = selectedCategory?.items.sorted(byKeyPath: "dateCreated", ascending: true)
         tableView.reloadData()
     }
     
 }
 extension ListViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        loadItems(with: request, predicate: predicate)
+        items = items?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
+        tableView.reloadData()
     }
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0{
