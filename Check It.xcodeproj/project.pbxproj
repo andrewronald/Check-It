@@ -15,6 +15,7 @@
 		101B0B99230CDE5F0074D0A6 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101B0B98230CDE5F0074D0A6 /* Item.swift */; };
 		101B0B9B230CDE670074D0A6 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101B0B9A230CDE670074D0A6 /* Category.swift */; };
 		1076A1BF230B1F2C00909ACA /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1076A1BE230B1F2C00909ACA /* CategoryViewController.swift */; };
+		108BA618230F255900205925 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108BA617230F255900205925 /* SwipeTableViewController.swift */; };
 		933DF1FDB8DD6DE4BF432C4E /* Pods_Check_It.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FC68AA422849531B2AA6815 /* Pods_Check_It.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +30,7 @@
 		101B0B98230CDE5F0074D0A6 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		101B0B9A230CDE670074D0A6 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		1076A1BE230B1F2C00909ACA /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
+		108BA617230F255900205925 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		2FC68AA422849531B2AA6815 /* Pods_Check_It.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Check_It.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E028D4A66B16E22691DB38E3 /* Pods-Check It.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Check It.debug.xcconfig"; path = "Target Support Files/Pods-Check It/Pods-Check It.debug.xcconfig"; sourceTree = "<group>"; };
 		FD245055500B6EF65830717E /* Pods-Check It.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Check It.release.xcconfig"; path = "Target Support Files/Pods-Check It/Pods-Check It.release.xcconfig"; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				10133A4B23035BDF003FF742 /* ListViewController.swift */,
+				108BA617230F255900205925 /* SwipeTableViewController.swift */,
 				1076A1BE230B1F2C00909ACA /* CategoryViewController.swift */,
 			);
 			path = Controllers;
@@ -248,6 +251,7 @@
 				1076A1BF230B1F2C00909ACA /* CategoryViewController.swift in Sources */,
 				10133A4C23035BDF003FF742 /* ListViewController.swift in Sources */,
 				10133A4A23035BDF003FF742 /* AppDelegate.swift in Sources */,
+				108BA618230F255900205925 /* SwipeTableViewController.swift in Sources */,
 				101B0B9B230CDE670074D0A6 /* Category.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
